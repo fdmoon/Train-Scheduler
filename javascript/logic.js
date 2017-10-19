@@ -97,7 +97,7 @@ $(document).ready(function() {
 			$("#select-delData").attr("disabled", "disabled");
 		}
 		else {
-			alert("All inputs are required!")
+			alert("All inputs are required!");
 		}
 	});
 
