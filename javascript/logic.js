@@ -13,12 +13,16 @@ $(document).ready(function() {
 
 	var database = firebase.database();
 
+	// When data in TrainSchedule is changed
 	database.ref("/TrainSchedule").on("value", function(snap) {
+		// Clear table
 		$("#display-schedule").empty();
 
+		// Get current data
 		var currentTime = moment();
 		$("#curtime").text("(" + currentTime.format("hh:mm A") + ")");		
 
+		// Add data to table
 		snap.forEach(function(childsnap) {
 			var info = childsnap.val();
 
@@ -27,34 +31,32 @@ $(document).ready(function() {
 			tr.append("<td>" + info.destination + "</td>");
 			tr.append("<td>" + info.frequency + "</td>");
 
+			// Calculate time using moment.js
 			var firstTimeConverted = moment(info.firstTime, "hh:mm").subtract(1, "years");
 			var diffTime = currentTime.diff(moment(firstTimeConverted), "minutes");
 			var tRemainder = diffTime % info.frequency;
 			var tMinutesTillTrain = info.frequency - tRemainder;
 			var nextTrain = currentTime.add(tMinutesTillTrain, "minutes");
 
-			if(diffTime >= 0) {
-				tr.append("<td>" + moment(nextTrain).format("hh:mm A") + "</td>");
-				tr.append("<td>" + tMinutesTillTrain + "</td>");
-			}
-			else {
-				tr.append("<td>N/A</td>");
-				tr.append("<td>N/A</td>");
-			}
+			tr.append("<td>" + moment(nextTrain).format("hh:mm A") + "</td>");
+			tr.append("<td>" + tMinutesTillTrain + "</td>");
 			
 			$("#display-schedule").append(tr);
 		});
 	});
 
+	// When submit button is clicked
 	$("#select-schedule").on("click", function(event) {
 		// prevent form from submitting
 		event.preventDefault();
 
+		// Retrieve data
 		var name = $("#data-name").val().trim();
 		var dest = $("#data-dest").val().trim();
 		var ftime = $("#data-ftime").val().trim();
 		var freq = $("#data-freq").val().trim();
 
+		// Add data to Firebase
 		database.ref("/TrainSchedule").push({
 			trainName: name,
 			destination: dest,
@@ -62,6 +64,7 @@ $(document).ready(function() {
 			frequency: freq
 		});
 
+		// Clear each field
 		$("#data-name").val("");
 		$("#data-dest").val("");
 		$("#data-ftime").val("");
