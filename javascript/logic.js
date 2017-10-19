@@ -27,6 +27,7 @@ $(document).ready(function() {
 			var info = childsnap.val();
 
 			var tr = $("<tr>");
+			tr.attr("key", childsnap.key);
 			tr.append("<td>" + info.trainName + "</td>");
 			tr.append("<td>" + info.destination + "</td>");
 			tr.append("<td>" + info.frequency + "</td>");
@@ -69,6 +70,17 @@ $(document).ready(function() {
 		$("#data-dest").val("");
 		$("#data-ftime").val("");
 		$("#data-freq").val("");
+	});
+
+	// When a row in table is clicked
+	$(document).on("click", "tbody tr", function() {
+		// Display data of selected row
+		database.ref("/TrainSchedule/" + $(this).attr("key")).on("value", function(snap) {
+			$("#data-name").val(snap.val().trainName);
+			$("#data-dest").val(snap.val().destination);
+			$("#data-ftime").val(snap.val().firstTime);
+			$("#data-freq").val(snap.val().frequency);
+		});
 	});
 
 	// database.ref("/TrainSchedule").set({});	// clear data in Firebase
