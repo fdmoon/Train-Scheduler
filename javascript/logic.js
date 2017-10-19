@@ -13,6 +13,7 @@ $(document).ready(function() {
 
 	var database = firebase.database();
 	var currentKey = "";
+	var minCompare = 0;
 
 	// Set inital state (disable)
 	$("#select-newData").attr("disabled", "disabled");
@@ -24,30 +25,31 @@ $(document).ready(function() {
 		$("#display-schedule").empty();
 
 		// Get current data
-		var currentTime = moment();
-		$("#curtime").text("(" + currentTime.format("hh:mm A") + ")");		
+		$("#curtime").text("(Current Time " + moment().format("hh:mm A") + ")");
 
 		// Add data to table
 		snap.forEach(function(childsnap) {
-			var info = childsnap.val();
+			if(childsnap.key !== "timeCounter") {
+				var info = childsnap.val();
 
-			var tr = $("<tr>");
-			tr.attr("key", childsnap.key);
-			tr.append("<td>" + info.trainName + "</td>");
-			tr.append("<td>" + info.destination + "</td>");
-			tr.append("<td>" + info.frequency + "</td>");
+				var tr = $("<tr>");
+				tr.attr("key", childsnap.key);
+				tr.append("<td>" + info.trainName + "</td>");
+				tr.append("<td>" + info.destination + "</td>");
+				tr.append("<td>" + info.frequency + "</td>");
 
-			// Calculate time using moment.js
-			var firstTimeConverted = moment(info.firstTime, "hh:mm").subtract(1, "years");
-			var diffTime = currentTime.diff(moment(firstTimeConverted), "minutes");
-			var tRemainder = diffTime % info.frequency;
-			var tMinutesTillTrain = info.frequency - tRemainder;
-			var nextTrain = currentTime.add(tMinutesTillTrain, "minutes");
+				// Calculate time using moment.js
+				var firstTimeConverted = moment(info.firstTime, "hh:mm").subtract(1, "years");
+				var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+				var tRemainder = diffTime % info.frequency;
+				var tMinutesTillTrain = info.frequency - tRemainder;
+				var nextTrain = moment().add(tMinutesTillTrain, "minutes");
 
-			tr.append("<td>" + moment(nextTrain).format("hh:mm A") + "</td>");
-			tr.append("<td>" + tMinutesTillTrain + "</td>");
-			
-			$("#display-schedule").append(tr);
+				tr.append("<td>" + moment(nextTrain).format("hh:mm A") + "</td>");
+				tr.append("<td>" + tMinutesTillTrain + "</td>");
+				
+				$("#display-schedule").append(tr);
+			}
 		});
 	});
 
@@ -155,7 +157,16 @@ $(document).ready(function() {
 		// Disable "New" and "Delete" buttons
 		$("#select-newData").attr("disabled", "disabled");
 		$("#select-delData").attr("disabled", "disabled");
-	});	
+	});
+
+	// Set timer
+	var intervalId = setInterval(function() {
+		var minute = moment().minute();
+		if(minute !== minCompare) {
+			minCompare = minute;
+			database.ref("/TrainSchedule/timeCounter").set(minCompare);
+		}
+	}, 1000);	
 
 	// database.ref("/TrainSchedule").set({});	// clear data in Firebase
 });
