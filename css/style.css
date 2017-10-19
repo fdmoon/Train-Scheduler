@@ -1,0 +1,63 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	position: relative;
+	font-family: 'Baloo Thambi', cursive;
+	font-size: 1.5em;
+}
+
+body:after {
+	content : "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-image: url(../images/trainschedule_bg.jpg);
+	width: 100%;
+	min-height: 100%;
+	opacity : 0.3;
+	z-index: -1;
+}
+
+input {
+	width: 100%;
+}
+
+.jumbotron {
+	color: #fff;
+	background-color: #333F48;
+	text-align: center;
+	padding: 15px;
+	margin-bottom: 30px;
+}
+
+.defaultFont {
+	font-family: 'Baloo Thambi', cursive;
+}
+
+.panel-ut {
+  border-color: #bf5700;
+}
+.panel-ut > .panel-heading {
+  color: #fff;
+  background-color: #bf5700;
+  border-color: #bf5700;
+}
+.panel-ut > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: #bf5700;
+}
+.panel-ut > .panel-heading .badge {
+  color: #bf5700;
+  background-color: #fff;
+}
+.panel-ut > .panel-footer + .panel-collapse > .panel-body {
+  border-bottom-color: #bf5700;
+}
+
+#curtime {
+	font-size: 1.4em;
+	color: #333F48;
+}
+

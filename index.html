@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Train Scheduler</title>
+
+	<link rel="icon" sizes="32x32" href="images/train_icon.png">
+
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+
+	<link href="https://fonts.googleapis.com/css?family=Baloo+Thambi" rel="stylesheet">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.5.1/firebase.js"></script>
+	<script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+
+ 	<script src="javascript/logic.js"></script>
+</head>
+<body>
+	<div class="container">
+		<section class="jumbotron">
+			<h1>Anytime is Train Time</h1>
+			<p>Choo Choo. Chee Chee.</p>
+		</section>
+
+		<section class="panel panel-ut">
+			<div class="panel-heading">
+				<span class="glyphicon glyphicon-list-alt"/>
+				<span class="defaultFont"> Current Train Schedule </span>
+				<span class="defaultFont" id="curtime"><span>
+			</div>
+			<div class="panel-body">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Train Name</th>
+							<th>Destination</th>
+							<th>Frequency (min)</th>
+							<th>Next Arrival</th>
+							<th>Minutes Away</th>
+						</tr>
+					</thead> 
+					<tbody id="display-schedule">
+						<!-- <tr>
+							<td></td>
+							<td></td>
+						</tr> -->
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section class="panel panel-ut">
+			<div class="panel-heading">
+				<span class="glyphicon glyphicon-edit"/>
+				<span class="defaultFont"> Add Train </span>	
+			</div>
+			<div class="panel-body">
+				<form id="schedule-form">
+					<label for="data-name">Train Name</label><br>
+					<input type="text" class="form-control" id="data-name" required><br>
+					<label for="data-dest">Destination</label><br>
+					<input type="text" class="form-control" id="data-dest" required><br>
+					<label for="data-ftime">First Train Time (hh:mm AM/PM - ex. 03:30 AM)</label><br>
+					<input type="time" class="form-control" id="data-ftime" required><br>
+					<label for="data-freq">Frequency (min)</label><br>
+					<input type="number" class="form-control" id="data-freq" required><br>
+
+					<button class="btn btn-warning btn-md" id="select-schedule">Submit</button>
+			</div>
+		</section>
+	</div>
+</body>
+</html>
+
