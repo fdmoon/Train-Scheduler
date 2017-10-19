@@ -12,6 +12,11 @@ $(document).ready(function() {
 	firebase.initializeApp(config);
 
 	var database = firebase.database();
+	var currentKey = "";
+
+	// Set inital state (disable)
+	$("#select-newData").attr("disabled", "disabled");
+	$("#select-delData").attr("disabled", "disabled");
 
 	// When data in TrainSchedule is changed
 	database.ref("/TrainSchedule").on("value", function(snap) {
@@ -46,8 +51,8 @@ $(document).ready(function() {
 		});
 	});
 
-	// When submit button is clicked
-	$("#select-schedule").on("click", function(event) {
+	// When "Submit" button is clicked
+	$("#select-addData").on("click", function(event) {
 		// prevent form from submitting
 		event.preventDefault();
 
@@ -57,31 +62,100 @@ $(document).ready(function() {
 		var ftime = $("#data-ftime").val().trim();
 		var freq = $("#data-freq").val().trim();
 
-		// Add data to Firebase
-		database.ref("/TrainSchedule").push({
-			trainName: name,
-			destination: dest,
-			firstTime: ftime,
-			frequency: freq
+		// Check if all data isn't empty
+		if((name !== "") && (dest !== "") && (ftime !== "") && (freq !== "")) {
+
+			if(currentKey === "") {
+				// Add new data to Firebase
+				database.ref("/TrainSchedule").push({
+					trainName: name,
+					destination: dest,
+					firstTime: ftime,
+					frequency: freq
+				});
+			}
+			else {
+				// Update data
+				database.ref("/TrainSchedule/" + currentKey).set({
+					trainName: name,
+					destination: dest,
+					firstTime: ftime,
+					frequency: freq
+				});				
+			}
+
+			// Clear each field
+			$("#data-name").val("");
+			$("#data-dest").val("");
+			$("#data-ftime").val("");
+			$("#data-freq").val("");
+
+			// Disable "New" and "Delete" buttons
+			$("#select-newData").attr("disabled", "disabled");
+			$("#select-delData").attr("disabled", "disabled");
+		}
+		else {
+			alert("All inputs are required!")
+		}
+	});
+
+	// When a row in table is clicked
+	$(document).on("click", "tbody tr", function() {
+		// Display data of selected row
+		currentKey = $(this).attr("key");
+
+		database.ref("/TrainSchedule/" + currentKey).on("value", function(snap) {
+			$("#data-name").val(snap.val().trainName);
+			$("#data-dest").val(snap.val().destination);
+			$("#data-ftime").val(snap.val().firstTime);
+			$("#data-freq").val(snap.val().frequency);
 		});
+
+		// Enable "New" and "Delete" buttons
+		$("#select-newData").removeAttr("disabled");
+		$("#select-delData").removeAttr("disabled");
+	});
+
+	// When "New" button is clicked
+	$("#select-newData").on("click", function(event) {
+		// prevent form from submitting
+		event.preventDefault();
+
+		// Initialize currentKey
+		currentKey = "";
 
 		// Clear each field
 		$("#data-name").val("");
 		$("#data-dest").val("");
 		$("#data-ftime").val("");
 		$("#data-freq").val("");
+
+		// Disable "New" and "Delete" buttons
+		$("#select-newData").attr("disabled", "disabled");
+		$("#select-delData").attr("disabled", "disabled");		
 	});
 
-	// When a row in table is clicked
-	$(document).on("click", "tbody tr", function() {
-		// Display data of selected row
-		database.ref("/TrainSchedule/" + $(this).attr("key")).on("value", function(snap) {
-			$("#data-name").val(snap.val().trainName);
-			$("#data-dest").val(snap.val().destination);
-			$("#data-ftime").val(snap.val().firstTime);
-			$("#data-freq").val(snap.val().frequency);
-		});
-	});
+	// When "Delete" button is clicked
+	$("#select-delData").on("click", function(event) {
+		// prevent form from submitting
+		event.preventDefault();
+
+		// Delete selected data
+		database.ref("/TrainSchedule").child(currentKey).remove();
+
+		// Initialize currentKey
+		currentKey = "";
+
+		// Clear each field
+		$("#data-name").val("");
+		$("#data-dest").val("");
+		$("#data-ftime").val("");
+		$("#data-freq").val("");
+
+		// Disable "New" and "Delete" buttons
+		$("#select-newData").attr("disabled", "disabled");
+		$("#select-delData").attr("disabled", "disabled");
+	});	
 
 	// database.ref("/TrainSchedule").set({});	// clear data in Firebase
 });
